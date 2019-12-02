@@ -10,8 +10,9 @@
 #endif
 
 #if defined(__linux__)
-#include <netinet/in.h>
 #include <arpa/nameser.h>
+#include <cstring>
+#include <netinet/in.h>
 #include <resolv.h>
 #endif // __linux__
 
@@ -62,7 +63,7 @@ int main(int argc, char** argv)
         unsigned char nsbuf[1024];
         memset(nsbuf, 0, sizeof(nsbuf));
 
-        res_query(domain.c_str(), ns_c_any, ns_t_a, nsbuf, sizeof(nsbuf));
+        int rc = res_query(domain.c_str(), ns_c_any, ns_t_a, nsbuf, sizeof(nsbuf));
         if (rc == -1)
         {
             const auto now = std::chrono::system_clock::now();
