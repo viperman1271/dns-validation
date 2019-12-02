@@ -60,9 +60,19 @@ int main(int argc, char** argv)
         pSrvList = nullptr;
 #elif defined(__linux__)
         unsigned char nsbuf[1024];
-        res_query(domain.c_str(), ns_c_any, ns_t_a, nsbuf, sizeof(nsbuf));
+        memset(nsbuf, 0, sizeof(nsbuf));
 
-        std::cout << nsbuf << std::endl;
+        res_query(domain.c_str(), ns_c_any, ns_t_a, nsbuf, sizeof(nsbuf));
+        if (rc == -1)
+        {
+            const auto now = std::chrono::system_clock::now();
+            const std::time_t now_t = std::chrono::system_clock::to_time_t(now);
+            std::cerr << "[" << std::ctime(&now_t) << "] Unable to resolve " << domain << " using " << server << std::endl;
+        }
+        else
+        {
+            std::cout << "Value for " << domain << " was successfully retrieved" << " (" << nsbuf << ")" << std::endl;
+        }
 #endif // _WINDOWS
     }
 
