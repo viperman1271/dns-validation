@@ -51,12 +51,18 @@ int main(int argc, char** argv)
 
             return -1;
         }
+        else
+        {
+            std::cout << "Value for " << domain << " was successfully retrieved" << std::endl;
+        }
 
         LocalFree(pSrvList);
         pSrvList = nullptr;
 #elif defined(__linux__)
         unsigned char nsbuf[1024];
         res_query(domain.c_str(), ns_c_any, ns_t_a, nsbuf, sizeof(nsbuf));
+
+        std::cout << nsbuf << std::endl;
 #endif // _WINDOWS
     }
 
