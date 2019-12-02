@@ -9,6 +9,12 @@
 #pragma comment(lib, "ws2_32.lib")
 #endif
 
+#if defined(__linux__)
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <resolv.h>
+#endif // __linux__
+
 int main(int argc, char** argv)
 {
     CLI::App app("Command line application for querying dns records from a specific server");
@@ -48,6 +54,9 @@ int main(int argc, char** argv)
 
         LocalFree(pSrvList);
         pSrvList = nullptr;
+#elif defined(__linux__)
+        unsigned char nsbuf[1024];
+        res_query(domain.c_str(), ns_c_any, ns_t_a, nsbuf, sizeof(nsbuf));
 #endif // _WINDOWS
     }
 
