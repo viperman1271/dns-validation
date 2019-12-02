@@ -15,6 +15,8 @@ endif()
 if(UNIX)
     include(~/vcpkg/scripts/buildsystems/vcpkg.cmake)
     
+    set_property(TARGET dns-validation PROPERTY CXX_STANDARD 11)
+    
     find_package(CLI11 CONFIG REQUIRED)
     
     target_link_libraries(dns-validation resolv)
