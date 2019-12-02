@@ -8,14 +8,15 @@ add_executable(dns-validation main.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
-find_package(CLI11 CONFIG REQUIRED)
-target_link_libraries(dns-validation CLI11::CLI11)
-
 if(WIN32)
     target_link_libraries(dns-validation dnsapi)
 endif()
 
 if(UNIX)
     include(~/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    
+    find_package(CLI11 CONFIG REQUIRED)
+    
     target_link_libraries(dns-validation resolv)
+    target_link_libraries(dns-validation CLI11::CLI11)
 endif()
