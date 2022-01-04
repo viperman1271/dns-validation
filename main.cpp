@@ -74,7 +74,7 @@ int main(int argc, char** argv)
         }
         else
         {
-            std::cout << "Value for " << domain << " was successfully retrieved" << " (" << nsbuf << ")" << std::endl;
+            std::cout << "Value for " << domain << " was successfully retrieved" /*<< " (" << nsbuf << ")"*/ << std::endl;
         }
 #endif // _WINDOWS
     }
