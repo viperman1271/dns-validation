@@ -376,4 +376,8 @@ ASALocalRun/
 # Visual Studio files
 *.sln
 *.vcxproj
-*.vcxproj.*
+i*.vcxproj.*
+
+# Linux executables
+dns-validation
+dns-validation-aws
