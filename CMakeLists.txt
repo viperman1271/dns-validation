@@ -21,10 +21,11 @@ if(UNIX)
     set_property(TARGET dns-validation-aws PROPERTY CXX_STANDARD 11)
     
     find_package(CLI11 CONFIG REQUIRED)
+    find_package(json-c CONFIG REQUIRED)
+    find_package(aws-lambda-runtime REQUIRED)
     
-    target_link_libraries(dns-validation resolv)
-    target_link_libraries(dns-validation CLI11::CLI11)
+    target_link_libraries(dns-validation resolv CLI11::CLI11)
+    target_link_libraries(dns-validation-aws resolv CLI11::CLI11 json-c::json-c AWS::aws-lambda-runtime)
 
-    target_link_libraries(dns-validation-aws resolv)
-    target_link_libraries(dns-validation-aws CLI11::CLI11)
+    aws_lambda_package_target(dns-validation-aws)
 endif()
