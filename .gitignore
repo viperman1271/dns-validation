@@ -381,3 +381,5 @@ i*.vcxproj.*
 # Linux executables
 dns-validation
 dns-validation-aws
+dns-validation-aws.zip
+output.txt
