@@ -383,3 +383,5 @@ dns-validation
 dns-validation-aws
 dns-validation-aws.zip
 output.txt
+temp.json
+.vscode/*
