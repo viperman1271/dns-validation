@@ -127,6 +127,7 @@ def readOutput():
 
     outputFile = open("output.txt", "r")
     jsonStr = outputFile.read()
+    print(jsonStr)
     jsonListObj = json.loads(jsonStr)
     outputFile.close()
 
