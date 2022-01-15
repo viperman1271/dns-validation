@@ -1,6 +1,5 @@
 import subprocess
 import sys
-from tkinter import E
 
 ## ////////////////////////////////////////////////////////////
 
@@ -16,6 +15,11 @@ def help():
 def parseCommandLineArguments():
     argsLen = len(sys.argv)
 
+    global filename
+    global forceAws
+
+    forceAws = False
+
     if argsLen < 3:
         help()
         return False
@@ -24,20 +28,18 @@ def parseCommandLineArguments():
         # Always skip the first, it's the exe or python file
         if i == 0:
             continue
-        
+
         if sys.argv[i] == "-f":
-            global filename
             filename = sys.argv[i + 1]
             i = i + 1
         elif sys.argv[i] == "-a":
-            global forceAws
             forceAws = True
 
     if not filename:
         help()
         return False
 
-    return False
+    return True
 
 def main():
     import json
@@ -68,8 +70,11 @@ def main():
             allInternalCorrect &= run("./dns-validation", argsFormatString.format(domain = jsonObj["domain"], server = jsonObj["server"]))
         else:
             allExternalCorrect &= run("./dns-validation", argsFormatString.format(domain = jsonObj["domain"], server = jsonObj["server"]))
+
+    if forceAws == True & allExternalCorrect == True:
+        return ValidateWithAws(jsonListObj)
         
-    if allInternalCorrect == True & allExternalCorrect == True:
+    elif allInternalCorrect == True & allExternalCorrect == True:
         return True
     
     elif allExternalCorrect == True:
@@ -78,34 +83,40 @@ def main():
 
     # If we weren't able to validate allExternal, then we'll use aws lambda
     elif allInternalCorrect == False & allExternalCorrect == False:
-        print()
-        print("//////////////////////////////////////////////////")
-        print("Attempting validations using AWS")
-        print("//////////////////////////////////////////////////")
-        print()
-    
-        allInternalCorrect == True
-        allExternalCorrect == True
+        return ValidateWithAws(jsonListObj)
 
-        outputList = []
-        outputObj = dict
-        for jsonObj in jsonListObj:
-            if(jsonObj["internal"] == False):
-                outputObj = {
-                    "server" : jsonObj["server"],
-                    "domain" : jsonObj["domain"]
-                } 
-                outputList.append(outputObj)
+    return False
 
-        tempFile = open("temp.json", "w")
-        tempFile.write(json.dumps(outputList))
-        tempFile.close()
+## ////////////////////////////////////////////////////////////
+def ValidateWithAws(jsonListObj):    
+    import json
+    print()
+    print("//////////////////////////////////////////////////")
+    print("Attempting validations using AWS")
+    print("//////////////////////////////////////////////////")
+    print()
 
-        awsFormatString = "lambda invoke --function-name dns-validation --payload file://temp.json output.txt"
-        returnVal = run("aws", awsFormatString)
+    allExternalCorrect = True
 
-        if returnVal == True:
-            return readOutput()
+    outputList = []
+    outputObj = dict
+    for jsonObj in jsonListObj:
+        if(jsonObj["internal"] == False):
+            outputObj = {
+                "server" : jsonObj["server"],
+                "domain" : jsonObj["domain"]
+            } 
+            outputList.append(outputObj)
+
+    tempFile = open("temp.json", "w")
+    tempFile.write(json.dumps(outputList))
+    tempFile.close()
+
+    awsFormatString = "lambda invoke --function-name dns-validation --payload file://temp.json output.txt"
+    returnVal = run("aws", awsFormatString)
+
+    if returnVal == True:
+        return readOutput()
 
     return False
 
